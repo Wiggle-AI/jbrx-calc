@@ -137,7 +137,7 @@ body{padding-top:calc(16px + env(safe-area-inset-top,0px))!important}
     if(mo)mo.disconnect();
     var taxOn=/%/.test((document.getElementById("tax")||{}).textContent||"");
     var saved=[1,2,3].map(function(i){var el=document.getElementById("t"+i);var h=el.innerHTML;var s=S1A+(taxOn?" <small>pre-tax</small>":"")+S1B+(taxOn?S2:"");if(i===1)s=s.replace("\u00b7 $8,888.88 total","off market value");el.innerHTML=s;return [el,h];});
-    var cs=getComputedStyle(body),limit=window.innerHeight-parseFloat(cs.paddingBottom)-2;
+    var H=window.innerHeight;if(navigator.standalone===true){var land=window.matchMedia&&matchMedia("(orientation: landscape)").matches,sh=land?Math.min(screen.width,screen.height):Math.max(screen.width,screen.height);if(sh>H&&sh-H<120)H=sh;}document.documentElement.style.height=H+"px";body.style.height=H+"px";var cs=getComputedStyle(body),limit=H-parseFloat(cs.paddingBottom)-2;
     app.style.flex="none";wrap.style.setProperty("--x","0px");
     function ok(z){app.style.zoom=z;var rows=wrap.querySelectorAll(".amtrow,.save,.head");for(var r=0;r<rows.length;r++){var row=rows[r],rw=row.getBoundingClientRect().width,need=0;if(row.classList.contains("amtrow")||row.classList.contains("head")){for(var q=0;q<row.children.length;q++)need+=row.children[q].getBoundingClientRect().width;need+=8;}else{var rg=document.createRange();rg.selectNodeContents(row);need=rg.getBoundingClientRect().width+2;}if(need>rw)return false;}return sent.getBoundingClientRect().top<=limit&&document.documentElement.scrollWidth<=window.innerWidth+1;}
     var lo=0.6,hi=2.0;
