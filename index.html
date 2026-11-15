@@ -80,6 +80,7 @@ body{display:flex;flex-direction:column}
 .calc-wrap .pays span:last-child{font-weight:500}
 .calc-wrap .amt.empty{color:var(--jb-dim);opacity:.45}
 .calc-wrap .pays .empty span{opacity:.45}
+body{padding-top:calc(16px + env(safe-area-inset-top,0px))!important}
 </style></head><body><div id="app"></div><script>
 (()=>{var M=`
 <div class="calc-wrap">
@@ -143,7 +144,7 @@ body{display:flex;flex-direction:column}
     if(ok(hi))lo=hi;else{for(var i=0;i<16;i++){var m=(lo+hi)/2;if(ok(m))lo=m;else hi=m;}}
     app.style.zoom=lo.toFixed(4);
     var free=limit-sent.getBoundingClientRect().top;
-    if(free>4){var x=Math.min(9,free*0.8/lo/11);for(var k=0;k<6;k++){wrap.style.setProperty("--x",x.toFixed(2)+"px");if(sent.getBoundingClientRect().top<=limit)break;x*=0.8;}if(sent.getBoundingClientRect().top>limit)wrap.style.setProperty("--x","0px");}
+    if(free>4){var x=Math.min(16,free*0.97/lo/11);for(var k=0;k<6;k++){wrap.style.setProperty("--x",x.toFixed(2)+"px");if(sent.getBoundingClientRect().top<=limit)break;x*=0.8;}if(sent.getBoundingClientRect().top>limit)wrap.style.setProperty("--x","0px");}
     saved.forEach(function(s){s[0].innerHTML=s[1];});
     if(mo)mo.observe(app,{childList:true,subtree:true,characterData:true});
   }
@@ -152,6 +153,10 @@ body{display:flex;flex-direction:column}
   document.addEventListener("input",function(e){if(e.target.id==="tmv"||e.target.id==="zip")later();});
   document.addEventListener("change",later);
   window.addEventListener("load",later);later();
+  [150,600,1500].forEach(function(t){setTimeout(later,t);});
+  window.addEventListener("pageshow",later);window.addEventListener("orientationchange",function(){setTimeout(later,300);});
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)setTimeout(later,100);});
+  if(window.visualViewport)visualViewport.addEventListener("resize",function(){if(document.activeElement&&document.activeElement.tagName==="INPUT")return;later();});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(later);
   mo=new MutationObserver(later);mo.observe(app,{childList:true,subtree:true,characterData:true});
   document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest("#reset"))setTimeout(later,0);});
