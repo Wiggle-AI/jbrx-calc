@@ -55,6 +55,13 @@ body{height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;box-sizing:bor
 .calc-wrap .pays{font-size:13.5px!important;line-height:1.2!important}
 .calc-wrap .pill input{padding:0 3px!important}
 body{padding-top:calc(4px + env(safe-area-inset-top,0px))!important;padding-bottom:calc(4px + env(safe-area-inset-bottom,0px))!important}
+
+html,body{height:100%}
+body{display:flex;flex-direction:column}
+#app{flex:1;display:flex;min-height:0}
+.calc-wrap{flex:1;width:100%;max-width:560px!important;box-sizing:border-box;justify-content:space-between}
+.calc-wrap .card{flex:1;display:flex;flex-direction:column}
+.calc-wrap .pays{flex:1;justify-content:space-evenly}
 </style></head><body><div id="app"></div><script>
 (()=>{var M=`
 <div class="calc-wrap">
@@ -89,5 +96,28 @@ body{padding-top:calc(4px + env(safe-area-inset-top,0px))!important;padding-bott
   document.addEventListener("keydown",function(e){if(e.key==="Enter")done();});
   document.querySelectorAll("input").forEach(function(i){i.setAttribute("enterkeyhint","done");});
   window.addEventListener("focusout",function(){setTimeout(function(){if(!document.activeElement||document.activeElement===document.body){window.scrollTo(0,0);}},50);});
+})();
+</script><script>
+["p1","p2","p3"].forEach(function(id){var el=document.getElementById(id);if(!el)return;
+  el.addEventListener("focus",function(){el.dataset.prev=el.value;el.value="";});
+  el.addEventListener("blur",function(){if(el.value.trim()===""){el.value=el.dataset.prev||"";el.dispatchEvent(new Event("input",{bubbles:true}));}});
+});
+</script><script>
+(function(){
+  var app=document.getElementById("app"),body=document.body,raf=0;
+  function fits(){return body.scrollHeight<=body.clientHeight+1&&body.scrollWidth<=body.clientWidth+1;}
+  function fit(){
+    var wrap=app.querySelector(".calc-wrap");if(!wrap)return;
+    wrap.style.flex="none";app.style.zoom=1;
+    var lo=1,hi=1.7;
+    if(!fits()){lo=0.8;hi=1;}
+    for(var i=0;i<14;i++){var m=(lo+hi)/2;app.style.zoom=m;if(fits())lo=m;else hi=m;}
+    app.style.zoom=lo;wrap.style.flex="";
+  }
+  function later(){cancelAnimationFrame(raf);raf=requestAnimationFrame(fit);}
+  window.addEventListener("resize",function(){if(document.activeElement&&document.activeElement.tagName==="INPUT")return;later();});
+  document.addEventListener("input",function(e){if(e.target.id==="tmv"||e.target.id==="zip")later();});
+  document.addEventListener("change",later);
+  window.addEventListener("load",later);later();
 })();
 </script></body></html>
