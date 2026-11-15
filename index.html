@@ -114,7 +114,7 @@ body{display:flex;flex-direction:column}
   var mo=null,sent=null;
   function fit(){
     var wrap=app.querySelector(".calc-wrap");if(!wrap)return;
-    if(!sent){sent=document.createElement("div");sent.style.cssText="height:0;width:100%;flex:none";app.parentNode.insertBefore(sent,app.nextSibling);document.body.style.flexDirection="column";}
+    if(!sent){sent=document.createElement("div");sent.style.cssText="height:0;width:100%;flex:none;margin-bottom:auto";app.style.marginTop="auto";app.parentNode.insertBefore(sent,app.nextSibling);document.body.style.flexDirection="column";}
     if(mo)mo.disconnect();
     var taxOn=/%/.test((document.getElementById("tax")||{}).textContent||"");
     var saved=[1,2,3].map(function(i){var el=document.getElementById("t"+i);var h=el.innerHTML;var s=S1A+(taxOn?" <small>incl. tax</small>":"")+S1B+(taxOn?S2:"");if(i===1)s=s.replace("\u00b7 $8,888.88 total","off market value");el.innerHTML=s;return [el,h];});
