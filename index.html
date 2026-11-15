@@ -103,6 +103,10 @@ body{display:flex;flex-direction:column}
   el.addEventListener("blur",function(){if(el.value.trim()===""){el.value=el.dataset.prev||"";el.dispatchEvent(new Event("input",{bubbles:true}));}});
 });
 </script><script>
+[["p1","off"],["p2","more off"]].forEach(function(x){var el=document.getElementById(x[0]);if(!el)return;var pill=el.parentNode;
+  Array.prototype.slice.call(pill.childNodes).forEach(function(n){if(n!==el)pill.removeChild(n);});
+  pill.insertBefore(document.createTextNode(x[1]+"\u00a0"),el);pill.appendChild(document.createTextNode("%"));});
+</script><script>
 (function(){
   var app=document.getElementById("app"),body=document.body,raf=0;
   function fits(){return body.scrollHeight<=body.clientHeight+1&&body.scrollWidth<=body.clientWidth+1;}
