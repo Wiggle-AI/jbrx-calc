@@ -59,9 +59,7 @@ body{padding-top:calc(4px + env(safe-area-inset-top,0px))!important;padding-bott
 html,body{height:100%}
 body{display:flex;flex-direction:column}
 #app{flex:1;display:flex;min-height:0}
-.calc-wrap{flex:1;width:100%;max-width:560px!important;box-sizing:border-box;justify-content:space-between}
-.calc-wrap .card{flex:1;display:flex;flex-direction:column}
-.calc-wrap .pays{flex:1;justify-content:space-evenly}
+.calc-wrap{flex:none;align-self:flex-start;width:100%;max-width:560px!important;box-sizing:border-box}
 </style></head><body><div id="app"></div><script>
 (()=>{var M=`
 <div class="calc-wrap">
@@ -109,19 +107,38 @@ body{display:flex;flex-direction:column}
 </script><script>
 (function(){
   var app=document.getElementById("app"),body=document.body,raf=0;
-  function fits(){return body.scrollHeight<=body.clientHeight+1&&body.scrollWidth<=body.clientWidth+1;}
+  var SAMPLE='<div class="amtrow"><span class="amt">$88,888.88 <small>incl. tax</small></span><span class="loan">Loan $88,888</span></div><div class="save">Saves $8,888.88 more \u00b7 $8,888.88 total</div><div class="taxamt">Price $88,888.88 + tax $8,888.88 (10.55%)</div>';
+  var mo=null;
   function fit(){
     var wrap=app.querySelector(".calc-wrap");if(!wrap)return;
-    wrap.style.flex="none";app.style.zoom=1;
-    var lo=1,hi=1.7;
-    if(!fits()){lo=0.8;hi=1;}
-    for(var i=0;i<14;i++){var m=(lo+hi)/2;app.style.zoom=m;if(fits())lo=m;else hi=m;}
-    app.style.zoom=lo;wrap.style.flex="";
+    if(mo)mo.disconnect();
+    var saved=[1,2,3].map(function(i){var el=document.getElementById("t"+i);var h=el.innerHTML;el.innerHTML=SAMPLE;return [el,h];});
+    var cs=getComputedStyle(body),pad=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+    var avail=window.innerHeight-pad-2,z=1;
+    
+    for(var i=0;i<6;i++){app.style.zoom=z;var h=wrap.offsetHeight;if(!h)break;
+      var nz=Math.max(0.75,Math.min(1.7,avail/h));if(Math.abs(nz-z)<0.002){z=nz;break;}z=nz;}
+    app.style.zoom=(z*0.99).toFixed(4);
+    for(var k=0;k<30&&(document.documentElement.scrollHeight>window.innerHeight+1||body.scrollHeight>body.clientHeight+1||wrap.getBoundingClientRect().bottom>window.innerHeight);k++){z*=0.98;app.style.zoom=z.toFixed(4);}
+    saved.forEach(function(s){s[0].innerHTML=s[1];});
+    if(mo)mo.observe(app,{childList:true,subtree:true,characterData:true});
   }
   function later(){cancelAnimationFrame(raf);raf=requestAnimationFrame(fit);}
   window.addEventListener("resize",function(){if(document.activeElement&&document.activeElement.tagName==="INPUT")return;later();});
   document.addEventListener("input",function(e){if(e.target.id==="tmv"||e.target.id==="zip")later();});
   document.addEventListener("change",later);
   window.addEventListener("load",later);later();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(later);
+  mo=new MutationObserver(later);mo.observe(app,{childList:true,subtree:true,characterData:true});
+  document.addEventListener("click",function(e){if(e.target.closest&&e.target.closest("#reset"))setTimeout(later,0);});
+})();
+</script><script>
+(function(){var el=document.getElementById("tmv");if(!el)return;
+  el.addEventListener("input",function(){
+    var v=el.value.replace(/[^0-9.]/g,"");var parts=v.split(".");var ip=parts[0].replace(/^0+(?=\d)/,"");
+    var dec=parts.length>1?"."+parts.slice(1).join("").slice(0,2):"";
+    var f=ip?"$"+ip.replace(/\B(?=(\d{3})+(?!\d))/g,","):(dec?"$0":"");
+    var nv=f+dec; if(nv!==el.value){el.value=nv;try{el.setSelectionRange(nv.length,nv.length)}catch(e){}}
+  },true);
 })();
 </script></body></html>
